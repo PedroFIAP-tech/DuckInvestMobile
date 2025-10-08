@@ -3,11 +3,18 @@ import { StyleSheet, Text, View, TextInput, TouchableOpacity, SafeAreaView } fro
 import { useFonts, Poppins_700Bold, Poppins_500Medium } from '@expo-google-fonts/poppins';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+// ----------------------------------------------------------------------
+// 1. ATUALIZAÇÃO DOS TIPOS DE ROTA
+// Adicione 'Home' que é a rota do seu Dashboard
+// ----------------------------------------------------------------------
 type RootStackParamList = {
   TelaOnboarding: undefined;
   TelaLogin: undefined;
   TelaCadastro: undefined;
+  Home: undefined; // Rota do Dashboard adicionada
 };
+// Use 'Home' no lugar de 'TelaLogin' nos tipos de props para que o navigation
+// reconheça a rota 'Home'.
 type Props = NativeStackScreenProps<RootStackParamList, 'TelaLogin'>;
 
 const TelaLogin: React.FC<Props> = ({ navigation }) => {
@@ -16,6 +23,16 @@ const TelaLogin: React.FC<Props> = ({ navigation }) => {
 
   const [fontsLoaded] = useFonts({ Poppins_700Bold, Poppins_500Medium });
   if (!fontsLoaded) return null;
+
+  // ----------------------------------------------------------------------
+  // 2. FUNÇÃO DE LOGIN (IMPLEMENTAÇÃO FAKE)
+  // Usa navigation.replace('Home') para ir para o Dashboard e limpar o histórico.
+  // ----------------------------------------------------------------------
+  const handleLogin = () => {
+    console.log('Login simulado. Navegando para o Dashboard...');
+
+    navigation.replace('Home');
+  };
 
   return (
     <SafeAreaView style={estilos.safeArea}>
@@ -40,7 +57,11 @@ const TelaLogin: React.FC<Props> = ({ navigation }) => {
           onChangeText={setSenha}
         />
 
-        <TouchableOpacity style={estilos.botaoPrincipal} onPress={() => console.log('Login...')} >
+        {/* 3. ATUALIZAÇÃO DO BOTÃO PARA USAR A NOVA FUNÇÃO */}
+        <TouchableOpacity
+          style={estilos.botaoPrincipal}
+          onPress={handleLogin} // Chama a função que navega para o Dashboard
+        >
           <Text style={estilos.textoBotaoPrincipal}>Entrar</Text>
         </TouchableOpacity>
 
