@@ -1,193 +1,164 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, SafeAreaView, Image, TouchableOpacity } from 'react-native';
-// Importação dos ícones vetoriais
+import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { COLORS } from '../styles/colors'; // Reutiliza as cores
+import { useFonts, Poppins_700Bold, Poppins_500Medium } from '@expo-google-fonts/poppins';
+import { COLORS } from '../styles/colors';
 
-import MascotePlaceholder from '../assets/duckbill.png'; 
+import GlobalHeader from '../components/GlobalHeader';
+import MascotePlaceholder from '../assets/mascote_duckbill.png';
 
-// Se o seu GlobalHeader for um componente separado, importe-o aqui:
-// import GlobalHeader from '../components/GlobalHeader'; 
-
-
-// --- DADOS MOCK DO PERFIL ---
 const profileData = {
-    rm: '#559250', 
-    name: 'Donald McDuck', 
-    level: 'Poupador Iniciante', // Simula o badge de gamificação
+  rm: '#559250',
+  name: 'Donald McDuck',
+  level: 'Poupador iniciante',
 };
 
-
-// --- TELA DE PERFIL ---
 export default function TelaPerfil() {
-    // Estado para armazenar o URI da foto de perfil (vazio inicialmente, carrega o mascote)
-    const [userAvatarUri, setUserAvatarUri] = useState<string | null>(null); 
-    
-    // Simulação da função para abrir galeria/câmera (A ser implementada com Expo ImagePicker)
-    const handleAvatarUpload = () => {
-        console.log('Abrindo galeria para o usuário escolher a foto...');
-        // Aqui você chamaria o ImagePicker e, em seguida, faria:
-        // setUserAvatarUri('link_da_nova_foto_do_usuario.jpg'); 
-    };
+  const [userAvatarUri, setUserAvatarUri] = useState<string | null>(null);
 
-    return ( 
-        <SafeAreaView style={styles.safeArea}>
-            {/* O HEADER GLOBAL VAI AQUI (se for necessário) */}
-            {/* <GlobalHeader /> */}
-            
-            <View style={styles.container}>
-                
-                {/* ÁREA SUPERIOR DO PERFIL (Fundo Cinza/Verde) */}
-                <View style={styles.profileHeader}>
-                    
-                    {/* BOTÃO DE EDITAR GERAL (Lápis superior direito) */}
-                    <TouchableOpacity style={styles.editButton}>
-                        <MaterialCommunityIcons name="pencil" size={24} color={COLORS.HIGHLIGHT_GOLD} />
-                    </TouchableOpacity>
-                    
-                    {/* AVATAR/FOTO DO USUÁRIO CENTRAL */}
-                    <View style={styles.avatarWrapper}>
-                        
-                        {/* Lógica: Se tem foto, mostra a foto. Senão, mostra o mascote placeholder. */}
-                        {userAvatarUri ? (
-                            <Image
-                                source={{ uri: userAvatarUri }} 
-                                style={styles.userAvatarImage} 
-                            />
-                        ) : (
-                            <Image
-                                source={MascotePlaceholder} // Mascote é o fallback
-                                style={styles.userAvatarImage} 
-                                resizeMode="contain"
-                            />
-                        )}
-                        
-                        {/* Ícone de editar pequeno (BOTÃO DE UPLOAD) */}
-                        <TouchableOpacity style={styles.avatarEditOverlay} onPress={handleAvatarUpload}>
-                            <MaterialCommunityIcons name="pencil" size={20} color={COLORS.PRIMARY_DARK} />
-                        </TouchableOpacity>
-                    </View>
-                    
-                    {/* DADOS DO USUÁRIO (RM e Nome/Nível) */}
-                    <View style={styles.userInfoContainer}>
-                        {/* ID (Esquerda) */}
-                        <Text style={styles.userIdText}>
-                            id {profileData.rm}
-                        </Text>
+  const [fontsLoaded] = useFonts({
+    Poppins_700Bold,
+    Poppins_500Medium,
+  });
 
-                        {/* Nome e Nível (Direita) */}
-                        <View style={styles.nameLevelWrapper}>
-                            <Text style={styles.userNameText}>
-                                {profileData.name}
-                            </Text>
-                            <Text style={styles.userLevelText}>
-                                {profileData.level}
-                            </Text>
-                        </View>
-                    </View>
-                </View>
+  const handleAvatarUpload = () => {
+    console.log('Abrindo galeria para o usuário escolher a foto...');
+  };
 
-                {/* CONTEÚDO RESTANTE (Opções de Conta, Configurações, etc.) */}
-                <ScrollView style={styles.contentContainer}>
-                    <Text style={styles.sectionTitle}>Opções da Conta</Text>
-                    {/* Adicionar botões de navegação para: Segurança, Histórico, Ajuda */}
-                </ScrollView>
-            </View>
-        </SafeAreaView>
-    );
+  const handleBannerUpload = () => {
+    console.log('Abrindo galeria para o usuário escolher a foto de CAPA...');
+  };
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
+  return (
+    // 1. O fundo geral da tela volta a ser o azul escuro padrão
+    <SafeAreaView style={styles.safeArea}>
+      <GlobalHeader notificationCount={2} />
+      
+      {/* Usamos ScrollView para caso o conteúdo cresça no futuro */}
+      <ScrollView contentContainerStyle={styles.container}>
+        
+        {/* 2. Esta é a área da CAPA cinza que o usuário poderá editar */}
+        <View style={styles.bannerContainer}>
+          <TouchableOpacity style={styles.editButton} onPress={handleBannerUpload}>
+            <MaterialCommunityIcons name="pencil" size={30} color={COLORS.HIGHLIGHT_GOLD} />
+          </TouchableOpacity>
+        </View>
+
+        {/* Container para o conteúdo do perfil (avatar e textos) */}
+        <View style={styles.profileContent}>
+          {/* 3. O avatar agora "flutua" sobre a área da capa */}
+          <View style={styles.avatarWrapper}>
+            {userAvatarUri ? (
+              <Image source={{ uri: userAvatarUri }} style={styles.userAvatarImage} />
+            ) : (
+              <Image source={MascotePlaceholder} style={styles.userAvatarImage} resizeMode="contain" />
+            )}
+            <TouchableOpacity style={styles.avatarEditOverlay} onPress={handleAvatarUpload}>
+              <MaterialCommunityIcons name="pencil" size={20} color={COLORS.PRIMARY_DARK} />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.userInfoContainer}>
+            <Text style={styles.userIdText}>
+              id {profileData.rm}
+            </Text>
+
+            <View style={styles.nameLevelWrapper}>
+              <Text style={styles.userNameText}>
+                {profileData.name}
+              </Text>
+              <Text style={styles.userLevelText}>
+                {profileData.level}
+              </Text>
+            </View>
+          </View>
+        </View>
+
+      </ScrollView>
+    </SafeAreaView>
+  );
 }
 
-
-// --- Estilos Específicos para a Tela de Perfil ---
 const styles = StyleSheet.create({
-    safeArea: { flex: 1, backgroundColor: '#0A192F' }, 
-    container: { flex: 1, backgroundColor: '#0A192F' },
-    
-    // --- ESTILOS DO CABEÇALHO (Área do Mascote) ---
-    profileHeader: {
-        height: 250,
-        backgroundColor: '#1ABC9C50', 
-        alignItems: 'center',
-        paddingTop: 30,
-        position: 'relative',
-    },
-    editButton: {
-        position: 'absolute',
-        top: 20,
-        right: 20,
-        zIndex: 10,
-    },
-
-    // Wrapper para a Foto/Avatar
-    avatarWrapper: {
-        width: 120,
-        height: 120,
-        borderRadius: 60,
-        backgroundColor: COLORS.ACTION_GREEN || '#1ABC9C', 
-        justifyContent: 'center',
-        alignItems: 'center',
-        overflow: 'hidden', 
-        marginBottom: 15,
-        borderWidth: 3, 
-        borderColor: COLORS.HIGHLIGHT_GOLD || '#BFA15A', // Borda Dourada
-    },
-    
-    // Estilos da Imagem
-    userAvatarImage: {
-        width: '100%',
-        height: '100%',
-    },
-    
-    avatarEditOverlay: {
-        position: 'absolute',
-        top: 0, 
-        right: 0,
-        backgroundColor: COLORS.HIGHLIGHT_GOLD || '#BFA15A', // Fundo Dourado do Lápis
-        borderRadius: 12,
-        padding: 2,
-        justifyContent: 'center',
-        alignItems: 'center',
-        transform: [{ translateX: 10 }, { translateY: -5 }],
-    },
-    
-    // --- ESTILOS DA INFORMAÇÃO DO USUÁRIO ---
-    userInfoContainer: {
-        position: 'absolute',
-        bottom: 20, 
-        width: '100%',
-        paddingHorizontal: 20,
-        flexDirection: 'row',
-        justifyContent: 'space-between', // ID na esquerda, Nome/Nível na direita
-        alignItems: 'flex-start',
-    },
-    userIdText: {
-        fontSize: 14,
-        color: COLORS.SUPPORT_WHITE || '#F0F2F5',
-        opacity: 0.7,
-    },
-    nameLevelWrapper: {
-        alignItems: 'flex-end', // Alinha Nome e Nível à direita
-    },
-    userNameText: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        color: COLORS.ACTION_GREEN || '#1ABC9C',
-    },
-    userLevelText: {
-        fontSize: 16,
-        color: COLORS.SUPPORT_WHITE || '#F0F2F5',
-        marginTop: 5,
-    },
-    
-    // --- ESTILOS DO CONTEÚDO RESTANTE ---
-    contentContainer: {
-        flex: 1,
-        padding: 20,
-    },
-    sectionTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: COLORS.SUPPORT_WHITE || '#F0F2F5',
-        marginBottom: 15,
-    }
+  safeArea: {
+    flex: 1,
+    backgroundColor: COLORS.PRIMARY_DARK, // Fundo padrão escuro
+  },
+  container: {
+    alignItems: 'center',
+  },
+  bannerContainer: {
+    width: '100%',
+    height: 180, // Altura da área da capa
+    backgroundColor: '#495057', // O cinza da área personalizável
+    position: 'relative', // Necessário para posicionar o botão de editar dentro dela
+  },
+  editButton: {
+    position: 'absolute',
+    top: 10,
+    right: 15,
+    zIndex: 10,
+  },
+  profileContent: {
+    width: '100%',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  avatarWrapper: {
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    backgroundColor: COLORS.ACTION_GREEN,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+    borderWidth: 4,
+    borderColor: COLORS.HIGHLIGHT_GOLD,
+    // Puxa o avatar para cima, fazendo ele sobrepor a capa
+    marginTop: -70, 
+  },
+  userAvatarImage: {
+    width: '100%',
+    height: '100%',
+  },
+  avatarEditOverlay: {
+    position: 'absolute',
+    bottom: 5,
+    right: 5,
+    backgroundColor: COLORS.HIGHLIGHT_GOLD,
+    borderRadius: 15,
+    padding: 5,
+  },
+  userInfoContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    marginTop: 20, // Espaço entre o avatar e as infos
+  },
+  userIdText: {
+    fontFamily: 'Poppins_500Medium',
+    fontSize: 16,
+    color: COLORS.SUPPORT_WHITE,
+    opacity: 0.8,
+  },
+  nameLevelWrapper: {
+    alignItems: 'flex-end',
+  },
+  userNameText: {
+    fontFamily: 'Poppins_700Bold',
+    fontSize: 24,
+    color: COLORS.ACTION_GREEN,
+  },
+  userLevelText: {
+    fontFamily: 'Poppins_500Medium',
+    fontSize: 18,
+    color: COLORS.HIGHLIGHT_GOLD,
+    marginTop: 4,
+  },
 });
