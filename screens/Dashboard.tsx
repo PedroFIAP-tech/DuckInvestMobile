@@ -114,7 +114,8 @@ const MascoteIcon = () => (
 
 
 // --- Tela Principal ---
-export default function Dashboard() {
+export default function Dashboard({ onNavigateToProfile }: { onNavigateToProfile: () => void }) {
+
   const [isBalanceVisible, setIsBalanceVisible] = useState(false);
   const [isFavoritesExpanded, setIsFavoritesExpanded] = useState(false);
 
@@ -165,10 +166,22 @@ export default function Dashboard() {
       
       <ScrollView style={styles.container}>
         {/* --- SEÇÃO: SAUDAÇÃO E PERFIL ("Olá, Donald!") --- */}
-        <View style={styles.header}>
-          <MascoteIcon />
-          <Text style={styles.greeting}>Olá, <Text style={styles.name}>{userData.name}!</Text></Text>
-        </View>
+        <TouchableOpacity 
+            // Garante que o clique chame a função de navegação
+            onPress={onNavigateToProfile} 
+            style={styles.header}
+            activeOpacity={0.8}
+        >
+            <MascoteIcon />
+            
+            {/* O texto "Olá, Donald!" e o nome completo são o alvo do clique */}
+            <Text style={styles.greeting}>
+                Olá, 
+                <Text style={styles.name}>
+                    {userData.name}!
+                </Text>
+            </Text>
+        </TouchableOpacity>
 
         {/* --- CARD DE SALDO --- */}
         <View style={styles.balanceCard}>
@@ -319,4 +332,11 @@ const styles = StyleSheet.create({
   alertStatusButton: { paddingHorizontal: 12, paddingVertical: 4, borderRadius: 15 },
   alertStatusText: { color: COLORS.PRIMARY_DARK, fontWeight: 'bold', fontSize: 12 },
   alertDivider: { height: 1, backgroundColor: COLORS.SUPPORT_WHITE, opacity: 0.1, marginTop: 15 },
+  linkText: {
+    color: COLORS.ACTION_GREEN,
+    textDecorationLine: 'underline',
+    fontWeight: 'bold',
+    marginLeft: 15,
+    fontSize: 20,
+  },
 });
