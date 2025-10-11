@@ -22,7 +22,6 @@ const userData = {
     { name: 'Visita ao Cofre', image: VisitaAoCofre , color: COLORS.ACTION_GREEN },
     { name: 'Mapa da Riqueza', image: MapaDaRiqueza, color: COLORS.ACTION_GREEN },
     { name: 'Caça ao Tesouro', image: CacaAoTesouro, color: COLORS.ACTION_GREEN },
-    // Adicionando mais itens para simular o conteúdo escondido
     { name: 'DuckBill', image: DuckBillIcon, color: COLORS.ACTION_GREEN },
   ],
   alerts: [

@@ -116,8 +116,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
-    borderWidth: 4,
-    borderColor: COLORS.HIGHLIGHT_GOLD,
     // Puxa o avatar para cima, fazendo ele sobrepor a capa
     marginTop: -70, 
   },

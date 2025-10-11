@@ -25,7 +25,7 @@ const TelaLogin: React.FC<Props> = ({ navigation }) => {
   if (!fontsLoaded) return null;
 
   // ----------------------------------------------------------------------
-  // 2. FUNÇÃO DE LOGIN (IMPLEMENTAÇÃO FAKE)
+  // 2. FUNÇÃO DE LOGIN (Atualizar para funcional )
   // Usa navigation.replace('Home') para ir para o Dashboard e limpar o histórico.
   // ----------------------------------------------------------------------
   const handleLogin = () => {

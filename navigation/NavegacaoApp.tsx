@@ -7,15 +7,16 @@ import OnboardingScreen from '../screens/TelaOnboarding';
 import TelaLogin from '../screens/TelaLogin';
 import TelaCadastro from '../screens/TelaCadastro';
 import DashboardScreen from '../screens/Dashboard';
-import PerfilTeste from '../screens/PerfilTeste';
+import TelaPerfil from '../screens/TelaPerfil';
 
 // 2. Adicione as novas rotas à lista de tipos
+
 type RootStackParamList = {
-  TelaOnboarding: undefined;
+  TelaOnboarding: undefined; // Rota adicionada
   TelaLogin: undefined;      // Rota adicionada
   TelaCadastro: undefined;   // Rota adicionada
-  Home: undefined;
-  PerfilTeste: undefined;
+  Home: undefined; // Rota adicionada
+  PerfilTeste: undefined; // Rota adicionada
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -44,7 +45,7 @@ const NavegacaoApp: React.FC = () => {
             />
           )}
         />
-        <Stack.Screen name="PerfilTeste" component={PerfilTeste} />
+        <Stack.Screen name="PerfilTeste" component={TelaPerfil} />
 
       </Stack.Navigator>
     </NavigationContainer>

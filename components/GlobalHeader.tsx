@@ -14,7 +14,8 @@ const GlobalHeader = ({ notificationCount }: GlobalHeaderProps) => {
 
   const navigateToHome = () => {
     // 1. Verificamos se é possível voltar na pilha de navegação.
-    //    Isso previne que o botão faça algo se já estivermos na tela Home.
+    //  Prever voltar para pagina dashboard
+    
     if (navigation.canGoBack()) {
       // 2. USAMOS O COMANDO CORRETO: popToTop()
       //    Ele volta para a primeira tela da pilha, em vez de criar uma nova.
