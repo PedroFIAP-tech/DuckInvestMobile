@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, SafeAreaView } from 'r
 import { useFonts, Poppins_700Bold, Poppins_500Medium } from '@expo-google-fonts/poppins';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-// Tipos de rota (sem alterações aqui, mas é bom manter)
+
 type RootStackParamList = {
   TelaOnboarding: undefined;
   TelaLogin: undefined;
@@ -21,7 +21,7 @@ const OnboardingScreen: React.FC<Props> = ({ navigation }) => {
     return null;
   }
 
-  // A tela agora é bem mais simples, apenas renderiza a apresentação
+  // A tela é simples, apenas renderiza a apresentação
   // e os botões de navegação.
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -35,12 +35,12 @@ const OnboardingScreen: React.FC<Props> = ({ navigation }) => {
           Moedinha
         </Text>
         <View style={styles.actionsContainer}>
-          {/* Botão "Criar Conta" agora navega para a tela de Cadastro */}
+          {/* Botão "Criar Conta"  navega para a tela de Cadastro */}
           <TouchableOpacity style={styles.buttonPrimary} onPress={() => navigation.navigate('TelaCadastro')}>
             <Text style={styles.buttonTextPrimary}>Criar Conta</Text>
           </TouchableOpacity>
 
-          {/* Botão "Já tenho conta" agora navega para a tela de Login */}
+          {/* Botão "Já tenho conta" navega para a tela de Login */}
           <TouchableOpacity style={styles.buttonSecondary} onPress={() => navigation.navigate('TelaLogin')}>
             <Text style={styles.buttonTextSecondary}>Já tenho conta</Text>
           </TouchableOpacity>
@@ -50,7 +50,7 @@ const OnboardingScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-// Os estilos permanecem praticamente os mesmos, removendo apenas o que não é mais usado.
+
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: '#0A192F' },
   container: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 30 },
