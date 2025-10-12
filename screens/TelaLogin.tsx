@@ -1,37 +1,54 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, SafeAreaView, Alert } from 'react-native';
 import { useFonts, Poppins_700Bold, Poppins_500Medium } from '@expo-google-fonts/poppins';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { COLORS } from '../styles/colors';
 
-// ----------------------------------------------------------------------
-// 1. ATUALIZAÇÃO DOS TIPOS DE ROTA
-// Adicione 'Home' que é a rota do seu Dashboard
-// ----------------------------------------------------------------------
 type RootStackParamList = {
   TelaOnboarding: undefined;
   TelaLogin: undefined;
   TelaCadastro: undefined;
-  Home: undefined; // Rota do Dashboard adicionada
+  Home: undefined;
 };
-// Use 'Home' no lugar de 'TelaLogin' nos tipos de props para que o navigation
-// reconheça a rota 'Home'.
 type Props = NativeStackScreenProps<RootStackParamList, 'TelaLogin'>;
 
 const TelaLogin: React.FC<Props> = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
 
+  const [emailError, setEmailError] = useState('');
+  const [senhaError, setSenhaError] = useState('');
+
   const [fontsLoaded] = useFonts({ Poppins_700Bold, Poppins_500Medium });
   if (!fontsLoaded) return null;
 
-  // ----------------------------------------------------------------------
-  // 2. FUNÇÃO DE LOGIN (IMPLEMENTAÇÃO FAKE)
-  // Usa navigation.replace('Home') para ir para o Dashboard e limpar o histórico.
-  // ----------------------------------------------------------------------
-  const handleLogin = () => {
-    console.log('Login simulado. Navegando para o Dashboard...');
+  const handleLogin = async () => {
+    let isValid = true;
+    setEmailError('');
+    setSenhaError('');
 
-    navigation.replace('Home');
+    if (!email.trim()) {
+      setEmailError('O e-mail é obrigatório.');
+      isValid = false;
+    }
+    if (!senha) {
+      setSenhaError('A senha é obrigatória.');
+      isValid = false;
+    }
+
+    if (!isValid) {
+      return;
+    }
+    
+    try {
+      console.log('Login validado (simulação). Salvando no AsyncStorage...');
+      await AsyncStorage.setItem('userToken', 'login-bem-sucedido');
+      navigation.replace('Home');
+    } catch (e) {
+      console.error('Erro ao salvar no AsyncStorage', e);
+      Alert.alert('Erro', 'Ocorreu um problema ao tentar fazer login.');
+    }
   };
 
   return (
@@ -43,24 +60,29 @@ const TelaLogin: React.FC<Props> = ({ navigation }) => {
         <TextInput
           style={estilos.entrada}
           placeholder="Seu e-mail"
+          // AQUI ESTÁ A CORREÇÃO: Adicionando a cor do placeholder de volta
           placeholderTextColor="#A9A9A9"
           keyboardType="email-address"
+          autoCapitalize="none"
           value={email}
           onChangeText={setEmail}
         />
+        {emailError ? <Text style={estilos.errorText}>{emailError}</Text> : null}
+
         <TextInput
           style={estilos.entrada}
           placeholder="Sua senha"
+          // AQUI ESTÁ A CORREÇÃO: Adicionando a cor do placeholder de volta
           placeholderTextColor="#A9A9A9"
           secureTextEntry
           value={senha}
           onChangeText={setSenha}
         />
+        {senhaError ? <Text style={estilos.errorText}>{senhaError}</Text> : null}
 
-        {/* 3. ATUALIZAÇÃO DO BOTÃO PARA USAR A NOVA FUNÇÃO */}
         <TouchableOpacity
           style={estilos.botaoPrincipal}
-          onPress={handleLogin} // Chama a função que navega para o Dashboard
+          onPress={handleLogin}
         >
           <Text style={estilos.textoBotaoPrincipal}>Entrar</Text>
         </TouchableOpacity>
@@ -73,23 +95,23 @@ const TelaLogin: React.FC<Props> = ({ navigation }) => {
   );
 };
 
+// Os estilos continuam os mesmos
 const estilos = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: '#0A192F' },
   conteudo: { flex: 1, justifyContent: 'center', paddingHorizontal: 30 },
   titulo: { fontFamily: 'Poppins_700Bold', color: '#F0F2F5', fontSize: 28, textAlign: 'center', marginBottom: 10 },
   subtitulo: { fontFamily: 'Poppins_500Medium', color: '#A9A9A9', fontSize: 16, textAlign: 'center', marginBottom: 40 },
-  entrada: {
-    backgroundColor: '#1E2A3A',
-    color: '#F0F2F5',
-    fontFamily: 'Poppins_500Medium',
-    borderRadius: 10,
-    padding: 15,
-    fontSize: 16,
-    marginBottom: 15,
-  },
-  botaoPrincipal: { backgroundColor: '#1ABC9C', paddingVertical: 16, borderRadius: 10, alignItems: 'center', marginTop: 20 },
+  entrada: { backgroundColor: '#1E2A3A', color: '#F0F2F5', fontFamily: 'Poppins_500Medium', borderRadius: 10, padding: 15, fontSize: 16, marginTop: 15 },
+  botaoPrincipal: { backgroundColor: '#1ABC9C', paddingVertical: 16, borderRadius: 10, alignItems: 'center', marginTop: 30 },
   textoBotaoPrincipal: { fontFamily: 'Poppins_700Bold', color: '#0A192F', fontSize: 16 },
   link: { fontFamily: 'Poppins_500Medium', color: '#1ABC9C', fontSize: 14, textAlign: 'center', marginTop: 20 },
+  errorText: {
+    fontFamily: 'Poppins_500Medium',
+    color: COLORS.ATTENTION_RED,
+    fontSize: 12,
+    marginLeft: 5,
+    marginBottom: 5,
+  },
 });
 
 export default TelaLogin;

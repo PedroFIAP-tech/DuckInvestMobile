@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity, ScrollView } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useFonts, Poppins_700Bold, Poppins_500Medium } from '@expo-google-fonts/poppins';
-import { COLORS } from '../styles/colors';
+import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { COLORS } from '../styles/colors';
 import GlobalHeader from '../components/GlobalHeader';
-import MascotePlaceholder from '../assets/mascote_duckbill.png';
+import MascotePlaceholder from '../assets/duckbill.png';
 
 const profileData = {
   rm: '#559250',
@@ -14,7 +16,8 @@ const profileData = {
 };
 
 export default function TelaPerfil() {
-  const [userAvatarUri, setUserAvatarUri] = useState<string | null>(null);
+  const [userAvatarUri, setUserAvatarUri] = React.useState<string | null>(null);
+  const navigation = useNavigation();
 
   const [fontsLoaded] = useFonts({
     Poppins_700Bold,
@@ -22,11 +25,28 @@ export default function TelaPerfil() {
   });
 
   const handleAvatarUpload = () => {
-    console.log('Abrindo galeria para o usuário escolher a foto...');
+    console.log('Abrindo galeria para o usuário escolher a foto de perfil...');
   };
 
   const handleBannerUpload = () => {
     console.log('Abrindo galeria para o usuário escolher a foto de CAPA...');
+  };
+
+  // Função para fazer o logout
+  const handleLogout = async () => {
+    try {
+      // Remove o token do armazenamento local
+      await AsyncStorage.removeItem('userToken');
+
+      // Reseta a pilha de navegação e envia o usuário para a tela inicial de autenticação
+      (navigation as any).reset({
+        index: 0,
+        routes: [{ name: 'TelaOnboarding' }],
+      });
+    } catch (e) {
+      console.error('Erro ao fazer logout', e);
+      Alert.alert("Erro", "Não foi possível sair da conta. Tente novamente.");
+    }
   };
 
   if (!fontsLoaded) {
@@ -34,23 +54,18 @@ export default function TelaPerfil() {
   }
 
   return (
-    // 1. O fundo geral da tela volta a ser o azul escuro padrão
     <SafeAreaView style={styles.safeArea}>
       <GlobalHeader notificationCount={2} />
       
-      {/* Usamos ScrollView para caso o conteúdo cresça no futuro */}
       <ScrollView contentContainerStyle={styles.container}>
         
-        {/* 2. Esta é a área da CAPA cinza que o usuário poderá editar */}
         <View style={styles.bannerContainer}>
           <TouchableOpacity style={styles.editButton} onPress={handleBannerUpload}>
             <MaterialCommunityIcons name="pencil" size={30} color={COLORS.HIGHLIGHT_GOLD} />
           </TouchableOpacity>
         </View>
 
-        {/* Container para o conteúdo do perfil (avatar e textos) */}
         <View style={styles.profileContent}>
-          {/* 3. O avatar agora "flutua" sobre a área da capa */}
           <View style={styles.avatarWrapper}>
             {userAvatarUri ? (
               <Image source={{ uri: userAvatarUri }} style={styles.userAvatarImage} />
@@ -76,6 +91,11 @@ export default function TelaPerfil() {
               </Text>
             </View>
           </View>
+
+          {/* BOTÃO DE SAIR DA CONTA */}
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+              <Text style={styles.logoutButtonText}>Sair da Conta</Text>
+          </TouchableOpacity>
         </View>
 
       </ScrollView>
@@ -86,16 +106,16 @@ export default function TelaPerfil() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: COLORS.PRIMARY_DARK, // Fundo padrão escuro
+    backgroundColor: COLORS.PRIMARY_DARK,
   },
   container: {
     alignItems: 'center',
   },
   bannerContainer: {
     width: '100%',
-    height: 180, // Altura da área da capa
-    backgroundColor: '#495057', // O cinza da área personalizável
-    position: 'relative', // Necessário para posicionar o botão de editar dentro dela
+    height: 180,
+    backgroundColor: '#495057',
+    position: 'relative',
   },
   editButton: {
     position: 'absolute',
@@ -118,8 +138,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderWidth: 4,
     borderColor: COLORS.HIGHLIGHT_GOLD,
-    // Puxa o avatar para cima, fazendo ele sobrepor a capa
-    marginTop: -70, 
+    marginTop: -70,
   },
   userAvatarImage: {
     width: '100%',
@@ -139,7 +158,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 10,
-    marginTop: 20, // Espaço entre o avatar e as infos
+    marginTop: 20,
   },
   userIdText: {
     fontFamily: 'Poppins_500Medium',
@@ -161,4 +180,17 @@ const styles = StyleSheet.create({
     color: COLORS.HIGHLIGHT_GOLD,
     marginTop: 4,
   },
+  logoutButton: {
+    marginTop: 50, // Espaço entre as infos e o botão
+    backgroundColor: COLORS.ATTENTION_RED,
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+    alignSelf: 'center', // Garante que o botão fique centralizado
+  },
+  logoutButtonText: {
+      fontFamily: 'Poppins_700Bold',
+      color: COLORS.SUPPORT_WHITE,
+      fontSize: 16,
+  }
 });
