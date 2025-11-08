@@ -3,7 +3,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { View, ActivityIndicator } from 'react-native'; // Para a tela de loading
-
 // Importe suas telas
 import OnboardingScreen from '../screens/TelaOnboarding';
 import TelaLogin from '../screens/TelaLogin';
@@ -11,6 +10,7 @@ import TelaCadastro from '../screens/TelaCadastro';
 import DashboardScreen from '../screens/Dashboard';
 import PerfilTeste from '../screens/PerfilTeste';
 import { COLORS } from '../styles/colors';
+import CotacaoScreen from '../screens/CotacaoScreen';
 
 type RootStackParamList = {
   TelaOnboarding: undefined;
@@ -18,6 +18,7 @@ type RootStackParamList = {
   TelaCadastro: undefined;
   Home: undefined;
   PerfilTeste: undefined;
+  Cotacao: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -60,22 +61,23 @@ const NavegacaoApp: React.FC = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        // A rota inicial agora é definida pelo nosso estado
         initialRouteName={initialRoute}
         screenOptions={{
           headerShown: false
         }}>
-        
+
         {/* Telas de Autenticação */}
         <Stack.Screen name="TelaOnboarding" component={OnboardingScreen} />
         <Stack.Screen name="TelaLogin" component={TelaLogin} />
         <Stack.Screen name="TelaCadastro" component={TelaCadastro} />
+        <Stack.Screen name="Cotacao" component={CotacaoScreen} />
 
         {/* Telas Principais do App */}
         <Stack.Screen
           name="Home"
           children={({ navigation }) => (
             <DashboardScreen
+              navigation={navigation}
               onNavigateToProfile={() => navigation.navigate('PerfilTeste')}
             />
           )}

@@ -10,298 +10,278 @@ import GlobalHeader from '../components/GlobalHeader';
 import VisitaAoCofre from '../assets/visitaaocofre.png';
 import MapaDaRiqueza from '../assets/mapadariqueza.png';
 import CacaAoTesouro from '../assets/cacaaotesouro.png';
-import MascoteDuckBill from '../assets/LogoDuck.png';
+import MascoteDuckBill from '../assets/mascote_duckbill.png'; // Verifique se este path está certo
 import DuckBillIcon from '../assets/duckbill.png';
 
 // --- Dados Mock (Simulando o Usuário Donald) ---
 const userData = {
-  name: 'Donald',
-  actualBalance: '1.000.250,50',
-  maskedBalance: '******',
-  favorites: [
-    { name: 'Visita ao Cofre', image: VisitaAoCofre , color: COLORS.ACTION_GREEN },
-    { name: 'Mapa da Riqueza', image: MapaDaRiqueza, color: COLORS.ACTION_GREEN },
-    { name: 'Caça ao Tesouro', image: CacaAoTesouro, color: COLORS.ACTION_GREEN },
-    { name: 'DuckBill', image: DuckBillIcon, color: COLORS.ACTION_GREEN },
-  ],
-  alerts: [
-    { title: 'Pagar chip:', value: 'R$ 65,00', date: 'ontem', status: 'concluído', statusColor: COLORS.ATTENTION_RED },
-    { title: 'Pagar assinatura:', value: 'R$ 19,90', date: 'próxima semana', status: 'concluído', statusColor: COLORS.ACTION_GREEN },
-  ],
+  name: 'Donald',
+  actualBalance: '1.000.250,50',
+  maskedBalance: '******',
+  favorites: [
+    { name: 'Visita ao Cofre', image: VisitaAoCofre , color: COLORS.ACTION_GREEN },
+    { name: 'Mapa da Riqueza', image: MapaDaRiqueza, color: COLORS.ACTION_GREEN },
+    { name: 'Caça ao Tesouro', image: CacaAoTesouro, color: COLORS.ACTION_GREEN },
+    { name: 'DuckBill', image: DuckBillIcon, color: COLORS.ACTION_GREEN },
+    { name: 'Cotação', image: DuckBillIcon, color: COLORS.ACTION_GREEN },
+  ],
+  alerts: [
+    { title: 'Pagar chip:', value: 'R$ 65,00', date: 'ontem', status: 'concluído', statusColor: COLORS.ATTENTION_RED },
+    { title: 'Pagar assinatura:', value: 'R$ 19,90', date: 'próxima semana', status: 'concluído', statusColor: COLORS.ACTION_GREEN },
+  ],
 };
 
 // --- Componentes Reutilizáveis ---
-// Card de Ícone no Menu de Favoritos
+
+// <-- CORREÇÃO 1: O tipo precisa aceitar a prop 'onPress'
 type FavoriteItemProps = {
-  item: { name: string; color: string; icon?: string; image?: any; };
+  item: { name: string; color: string; icon?: string; image?: any; };
+  onPress: () => void;
 };
 
-const FavoriteItem: React.FC<FavoriteItemProps> = ({ item }) => (
-  <TouchableOpacity style={styles.favoriteCard}>
-    <View style={[styles.favoriteIconWrapper, { backgroundColor: item.color + '33' }]}>
-      {item.image ? (
-        <Image source={item.image} style={{ width: 30, height: 30 }} resizeMode="contain" />
-      ) : (
-        <MaterialCommunityIcons name={item.icon as any} size={30} color={item.color} />
-      )}
-    </View>
-    <Text style={styles.favoriteText}>{item.name}</Text>
-  </TouchableOpacity>
+// <-- CORREÇÃO 2: O componente precisa receber 'onPress' e passá-lo para o TouchableOpacity
+const FavoriteItem: React.FC<FavoriteItemProps> = ({ item, onPress }) => (
+  <TouchableOpacity style={styles.favoriteCard} onPress={onPress}>
+    <View style={[styles.favoriteIconWrapper, { backgroundColor: item.color + '33' }]}>
+      {item.image ? (
+        <Image source={item.image} style={{ width: 30, height: 30 }} resizeMode="contain" />
+      ) : (
+        <MaterialCommunityIcons name={item.icon as any} size={30} color={item.color} />
+      )}
+    </View>
+    <Text style={styles.favoriteText}>{item.name}</Text>
+  </TouchableOpacity>
 );
 
 // Card de Alerta (Sino de Ouro)
 type AlertCardProps = {
-  title: string;
-  value: string;
-  date: string;
-  status: string;
-  statusColor: string;
+  title: string;
+  value: string;
+  date: string;
+  status: string;
+  statusColor: string;
 };
 
 const AlertCard: React.FC<AlertCardProps> = ({ title, value, date, status, statusColor }) => (
-  <View style={styles.alertCard}>
-    <Text style={styles.alertTitle}>{title}</Text>
-    <View style={styles.alertRow}>
-      <View>
-        <Text style={[styles.alertDate, date === 'ontem' && { color: COLORS.ATTENTION_RED }]}>
-          data prevista:
-          <Text style={{ fontWeight: 'bold' }}> {date}</Text>
-        </Text>
-      </View>
-      <View style={styles.alertValueStatus}>
-        <Text style={styles.alertValue}>{value}</Text>
-        <TouchableOpacity style={[styles.alertStatusButton, { backgroundColor: statusColor }]}>
-          <Text style={styles.alertStatusText}>{status}</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-    <View style={styles.alertDivider} />
-  </View>
+  <View style={styles.alertCard}>
+    <Text style={styles.alertTitle}>{title}</Text>
+    <View style={styles.alertRow}>
+      <View>
+        <Text style={[styles.alertDate, date === 'ontem' && { color: COLORS.ATTENTION_RED }]}>
+          data prevista:
+          <Text style={{ fontWeight: 'bold' }}> {date}</Text>
+        </Text>
+      </View>
+      <View style={styles.alertValueStatus}>
+        <Text style={styles.alertValue}>{value}</Text>
+        <TouchableOpacity style={[styles.alertStatusButton, { backgroundColor: statusColor }]}>
+          <Text style={styles.alertStatusText}>{status}</Text>
+        </TouchableOpacity>
+        </View>
+    </View>
+    <View style={styles.alertDivider} />
+  </View>
 );
 
 // Componente para o Avatar do Mascote com Imagem
 const MascoteIcon = () => (
-    <View style={styles.profileIconPlaceholder}>
-        <Image
-            source={require('../assets/mascote_duckbill.png')}
-            style={styles.mascoteImage}
-            resizeMode="contain"
-        />
-    </View>
+    <View style={styles.profileIconPlaceholder}>
+        <Image
+            source={require('../assets/mascote_duckbill.png')} // Verifique este path
+            style={styles.mascoteImage}
+            resizeMode="contain"
+        />
+    </View>
 );
 
 
 // --- Tela Principal ---
-export default function Dashboard({ onNavigateToProfile }: { onNavigateToProfile: () => void }) {
+// (Esta linha está correta, recebendo 'navigation' e 'onNavigateToProfile')
+export default function Dashboard({ navigation, onNavigateToProfile }: { navigation: any, onNavigateToProfile: () => void }) {
+  const [isBalanceVisible, setIsBalanceVisible] = useState(false);
+  const [isFavoritesExpanded, setIsFavoritesExpanded] = useState(false);
+  const expandAnimation = useRef(new Animated.Value(0)).current;
 
-  const [isBalanceVisible, setIsBalanceVisible] = useState(false);
-  const [isFavoritesExpanded, setIsFavoritesExpanded] = useState(false);
+  const handleToggleBalance = () => {
+    setIsBalanceVisible(!isBalanceVisible);
+  };
 
-  // Valor Animado para a Rotação da setinha dos favoritos (Começa em 0)
-  const expandAnimation = useRef(new Animated.Value(0)).current;
+  const handleToggleFavorites = () => {
+    const newState = !isFavoritesExpanded;
+    setIsFavoritesExpanded(newState);
 
-  const handleToggleBalance = () => {
-    setIsBalanceVisible(!isBalanceVisible);
+    Animated.timing(expandAnimation, {
+      toValue: newState ? 1 : 0, 
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  // <-- CORREÇÃO 3: Adicionar a função para tratar o clique
+  const handleFavoritePress = (itemName: string) => {
+    if (itemName === 'Cotação') {
+      navigation.navigate('Cotacao');
+    } else {
+      console.log('Navegar para:', itemName);
+    }
   };
 
-  const handleToggleFavorites = () => {
-    const newState = !isFavoritesExpanded;
-    setIsFavoritesExpanded(newState);
+  const arrowRotation = expandAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '180deg'],
+  });
 
-    // Lógica da Animação
-    Animated.timing(expandAnimation, {
-        toValue: newState ? 1 : 0, // 1 para expandido (seta para cima), 0 para recolhido (seta para baixo)
-        duration: 300,
-        useNativeDriver: true,
-    }).start();
-  };
+  const displayBalance = isBalanceVisible
+    ? userData.actualBalance
+    : userData.maskedBalance;
 
-  // Interpolação da Rotação (Traduz o 0 e 1 para graus de rotação)
-  const arrowRotation = expandAnimation.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '180deg'],
-  });
+  const toggleIcon = isBalanceVisible
+    ? 'eye-off-outline'
+    : 'eye-outline';
 
-  const displayBalance = isBalanceVisible
-    ? userData.actualBalance
-    : userData.maskedBalance;
+  const favoriteItemsToShow = isFavoritesExpanded ? userData.favorites : userData.favorites.slice(0, 3);
+  const notificationCount = userData.alerts.length;
 
-  const toggleIcon = isBalanceVisible
-    ? 'eye-off-outline'
-    : 'eye-outline';
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <GlobalHeader notificationCount={notificationCount} />
 
-  const favoriteItemsToShow = isFavoritesExpanded ? userData.favorites : userData.favorites.slice(0, 3);
+      <ScrollView style={styles.container}>
+        <TouchableOpacity
+          onPress={onNavigateToProfile}
+          style={[styles.header, { justifyContent: 'flex-start' }]} // Alinhamento corrigido
+          activeOpacity={0.8}
+        >
+          <MascoteIcon />
+          <Text style={styles.greeting}>Olá, <Text style={styles.name}>{userData.name}!</Text></Text>
+        </TouchableOpacity>
 
-  // Calcule o número de notificações a partir dos seus dados
-  const notificationCount = userData.alerts.length;
+        <View style={styles.balanceCard}>
+          <Text style={styles.balanceLabel}>Saldo Atual:</Text>
+          <Text style={styles.balanceValue}>R$ <Text>{displayBalance}</Text></Text>
+          <TouchableOpacity
+            style={styles.toggleIconContainer}
+            onPress={handleToggleBalance}
+          >
+            <MaterialCommunityIcons
+              name={toggleIcon as any}
+              size={30}
+              color={COLORS.SUPPORT_WHITE}
+              style={styles.cloudIcon}
+            />
+          </TouchableOpacity>
+        </View>
 
-  return (
-    <SafeAreaView style={styles.safeArea}>
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>Favoritos:</Text>
+          <View style={styles.favoritesRow}>
+            {favoriteItemsToShow.map((item, index) => (
+              <FavoriteItem 
+                key={index} 
+                item={item} 
+                // 4. Precisa chamar a função de clique aqui
+                onPress={() => handleFavoritePress(item.name)} 
+              />
+            ))}
+          </View>
+          {userData.favorites.length > 3 && (
+            <TouchableOpacity
+              style={styles.scrollDownIndicator}
+              onPress={handleToggleFavorites}
+              activeOpacity={0.7}
+            >
+              <Animated.View style={{ transform: [{ rotate: arrowRotation }] }}>
+                <MaterialCommunityIcons
+                  name={'chevron-down' as any}
+                  size={28}
+                  color={COLORS.SUPPORT_WHITE}
+                  style={{opacity: 0.8}}
+                />
+              </Animated.View>
+            </TouchableOpacity>
+          )}
+        </View>
 
-      {/* Use o componente GlobalHeader e passe o contador como uma prop */}
-      <GlobalHeader notificationCount={notificationCount} />
+        <View style={styles.goldBellContainer}>
+          <View style={styles.goldBellHeader}>
+            <Text style={styles.goldBellTitle}>Sino de Ouro:</Text>
+            <MaterialIcons name="notifications-active" size={24} color={COLORS.HIGHLIGHT_GOLD} />
+          </View>
+          {userData.alerts.map((alert, index) => (
+            <AlertCard key={index} {...alert} />
+          ))}
+        </View>
+        
+        {/* Removi o 'Menu de Acesso Rápido' duplicado daqui */}
 
-      <ScrollView style={styles.container}>
-        {/* --- SEÇÃO: SAUDAÇÃO E PERFIL ("Olá, Donald!") --- */}
-        <TouchableOpacity
-            // Garante que o clique chame a função de navegação
-            onPress={onNavigateToProfile}
-            style={styles.header}
-            activeOpacity={0.8}
-        >
-            <MascoteIcon />
-
-            {/* O texto "Olá, Donald!" e o nome completo são o alvo do clique */}
-            <Text style={styles.greeting}>
-                Olá,
-                <Text style={styles.name}>
-                    {userData.name}!
-                </Text>
-            </Text>
-        </TouchableOpacity>
-
-        {/* --- CARD DE SALDO --- */}
-        <View style={styles.balanceCard}>
-          <Text style={styles.balanceLabel}>Saldo Atual:</Text>
-          <Text style={styles.balanceValue}>R$ <Text>{displayBalance}</Text></Text>
-
-          <TouchableOpacity
-            style={styles.toggleIconContainer}
-            onPress={handleToggleBalance}
-          >
-            <MaterialCommunityIcons
-              name={toggleIcon as any}
-              size={30}
-              color={COLORS.SUPPORT_WHITE}
-              style={styles.cloudIcon}
-            />
-          </TouchableOpacity>
-        </View>
-
-        {/* --- FAVORITOS (Com Toggle) --- */}
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>Favoritos:</Text>
-
-          <View style={styles.favoritesRow}>
-            {favoriteItemsToShow.map((item, index) => (
-              <FavoriteItem key={index} item={item} />
-            ))}
-          </View>
-
-          {/* BOTÃO/INDICADOR DE EXPANDIR/RECOLHER */}
-          {userData.favorites.length > 3 && (
-              <TouchableOpacity
-                style={styles.scrollDownIndicator}
-                onPress={handleToggleFavorites}
-                activeOpacity={0.7}
-              >
-                <Animated.View style={{ transform: [{ rotate: arrowRotation }] }}>
-                  <MaterialCommunityIcons
-                    name={'chevron-down' as any}
-                    size={28}
-                    color={COLORS.SUPPORT_WHITE}
-                    style={{opacity: 0.8}}
-                  />
-                </Animated.View>
-              </TouchableOpacity>
-          )}
-
-        </View>
-
-        {/* --- Sino de Ouro --- */}
-        <View style={styles.goldBellContainer}>
-          <View style={styles.goldBellHeader}>
-            <Text style={styles.goldBellTitle}>Sino de Ouro:</Text>
-            <MaterialIcons name="notifications-active" size={24} color={COLORS.HIGHLIGHT_GOLD} />
-          </View>
-
-          {userData.alerts.map((alert, index) => (
-            <AlertCard key={index} {...alert} />
-          ))}
-        </View>
-
-      </ScrollView>
-    </SafeAreaView>
-  );
+      </ScrollView>
+    </SafeAreaView>
+  );
 }
 
-
 // --- Estilos ---
+// Este objeto 'styles' está limpo, sem nenhum caractere solto.
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: COLORS.BACKGROUND },
-  container: { flex: 1, paddingHorizontal: 20, backgroundColor: COLORS.BACKGROUND },
-
-  // --- Estilos da Seção "Olá, Donald!" ---
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', paddingVertical: 15 },
-
-  // ESTILOS DO AVATAR DA SAUDAÇÃO
-  profileIconPlaceholder: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#1ABC9C',
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
-  },
-  mascoteImage: {
-    width: '100%',
-    height: '100%',
-  },
-  greeting: { fontSize: 20, color: COLORS.SUPPORT_WHITE, fontWeight: 'normal', marginLeft: 15 },
-  name: { color: COLORS.ACTION_GREEN, fontWeight: 'bold' },
-
-  // ESTILOS DO AVATAR DO MASCOTE
-  mascoteProfileIcon: {
-      width: 60,
-      height: 50,
-      borderRadius: 10,
-      marginRight: 10,
-    },
-
-  // --- Card de Saldo ---
-  balanceCard: { backgroundColor: COLORS.PRIMARY_DARK, borderRadius: 10, padding: 20, marginBottom: 20, position: 'relative' },
-  balanceLabel: { color: COLORS.SUPPORT_WHITE, fontSize: 16, marginBottom: 5, opacity: 0.7 },
-  balanceValue: { fontSize: 32, fontWeight: 'bold', color: COLORS.HIGHLIGHT_GOLD },
-  toggleIconContainer: { position: 'absolute', top: 15, right: 20, padding: 5 },
-  cloudIcon: { opacity: 0.8, color: COLORS.SUPPORT_WHITE },
-
-  // --- Favoritos (Menu Rápido) ---
-  sectionContainer: { backgroundColor: COLORS.PRIMARY_DARK, borderRadius: 10, padding: 15, marginBottom: 20 },
-  sectionTitle: { color: COLORS.SUPPORT_WHITE, fontSize: 18, fontWeight: 'bold', marginBottom: 15 },
-  favoritesRow: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-around' },
-  favoriteCard: { alignItems: 'center', width: '30%', marginBottom: 15 },
-  favoriteIconWrapper: {
-    width: 60,
-    height: 60,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 5,
-  },
-  favoriteText: { color: COLORS.SUPPORT_WHITE, fontSize: 12, textAlign: 'center' },
-
-  // ESTILOS DO BOTÃO DE TOGGLE
-  scrollDownIndicator: { alignItems: 'center', marginTop: 10, padding: 5 },
-
-  // --- Sino de Ouro (Alertas) ---
-  goldBellContainer: { paddingVertical: 10 },
-  goldBellHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 15 },
-  goldBellTitle: { fontSize: 22, fontWeight: 'bold', color: COLORS.HIGHLIGHT_GOLD, marginRight: 10 },
-  alertCard: { paddingVertical: 15 },
-  alertTitle: { fontSize: 16, color: COLORS.SUPPORT_WHITE },
-  alertRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: 5 },
-  alertDate: { fontSize: 12, color: COLORS.ACTION_GREEN },
-  alertValueStatus: { flexDirection: 'row', alignItems: 'center' },
-  alertValue: { fontSize: 18, fontWeight: 'bold', color: COLORS.SUPPORT_WHITE, marginRight: 10 },
-  alertStatusButton: { paddingHorizontal: 12, paddingVertical: 4, borderRadius: 15 },
-  alertStatusText: { color: COLORS.PRIMARY_DARK, fontWeight: 'bold', fontSize: 12 },
-  alertDivider: { height: 1, backgroundColor: COLORS.SUPPORT_WHITE, opacity: 0.1, marginTop: 15 },
-  linkText: {
-    color: COLORS.ACTION_GREEN,
-    textDecorationLine: 'underline',
-    fontWeight: 'bold',
-    marginLeft: 15,
-    fontSize: 20,
-  },
+  safeArea: { flex: 1, backgroundColor: COLORS.BACKGROUND },
+  container: { flex: 1, paddingHorizontal: 20, backgroundColor: COLORS.BACKGROUND },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', paddingVertical: 15 },
+  profileIconPlaceholder: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#1ABC9C',
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
+  mascoteImage: {
+    width: '100%',
+    height: '100%',
+  },
+  greeting: { fontSize: 20, color: COLORS.SUPPORT_WHITE, fontWeight: 'normal', marginLeft: 15 },
+  name: { color: COLORS.ACTION_GREEN, fontWeight: 'bold' },
+  mascoteProfileIcon: {
+      width: 60,
+      height: 50,
+      borderRadius: 10,
+      marginRight: 10,
+    },
+  balanceCard: { backgroundColor: COLORS.PRIMARY_DARK, borderRadius: 10, padding: 20, marginBottom: 20, position: 'relative' },
+  balanceLabel: { color: COLORS.SUPPORT_WHITE, fontSize: 16, marginBottom: 5, opacity: 0.7 },
+  balanceValue: { fontSize: 32, fontWeight: 'bold', color: COLORS.HIGHLIGHT_GOLD },
+  toggleIconContainer: { position: 'absolute', top: 15, right: 20, padding: 5 },
+  cloudIcon: { opacity: 0.8, color: COLORS.SUPPORT_WHITE },
+  sectionContainer: { backgroundColor: COLORS.PRIMARY_DARK, borderRadius: 10, padding: 15, marginBottom: 20 },
+  sectionTitle: { color: COLORS.SUPPORT_WHITE, fontSize: 18, fontWeight: 'bold', marginBottom: 15 },
+  favoritesRow: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-around' },
+  favoriteCard: { alignItems: 'center', width: '30%', marginBottom: 15 },
+  favoriteIconWrapper: {
+    width: 60,
+    height: 60,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  favoriteText: { color: COLORS.SUPPORT_WHITE, fontSize: 12, textAlign: 'center' },
+  scrollDownIndicator: { alignItems: 'center', marginTop: 10, padding: 5 },
+  goldBellContainer: { paddingVertical: 10 },
+  goldBellHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 15 },
+  goldBellTitle: { fontSize: 22, fontWeight: 'bold', color: COLORS.HIGHLIGHT_GOLD, marginRight: 10 },
+  alertCard: { paddingVertical: 15 },
+  alertTitle: { fontSize: 16, color: COLORS.SUPPORT_WHITE },
+  alertRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: 5 },
+  alertDate: { fontSize: 12, color: COLORS.ACTION_GREEN },
+  alertValueStatus: { flexDirection: 'row', alignItems: 'center' },
+  alertValue: { fontSize: 18, fontWeight: 'bold', color: COLORS.SUPPORT_WHITE, marginRight: 10 },
+  alertStatusButton: { paddingHorizontal: 12, paddingVertical: 4, borderRadius: 15 },
+  alertStatusText: { color: COLORS.PRIMARY_DARK, fontWeight: 'bold', fontSize: 12 },
+  alertDivider: { height: 1, backgroundColor: COLORS.SUPPORT_WHITE, opacity: 0.1, marginTop: 15 },
+  linkText: {
+    color: COLORS.ACTION_GREEN,
+    textDecorationLine: 'underline',
+    fontWeight: 'bold',
+    marginLeft: 15,
+    fontSize: 20,
+  },
 });
