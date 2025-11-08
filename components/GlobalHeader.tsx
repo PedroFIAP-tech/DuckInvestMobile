@@ -12,16 +12,18 @@ type GlobalHeaderProps = {
 const GlobalHeader = ({ notificationCount }: GlobalHeaderProps) => {
   const navigation = useNavigation();
 
-  const navigateToHome = () => {
-    // navega para a tela inicial
-    (navigation as any).navigate('Home');
+  // Função ajustada para navegar para a tela de Dashboard
+  const navigateToDashboard = () => {
+    // Certifique-se de que sua tela principal no navegador de rotas se chama 'Dashboard'
+    (navigation as any).navigate('Dashboard');
   };
 
   return (
     <View style={styles.globalHeaderContainer}>
       <TouchableOpacity
         style={styles.logoContainer}
-        onPress={navigateToHome}
+        // A função chamada agora é a navigateToDashboard
+        onPress={navigateToDashboard}
         activeOpacity={0.7}
       >
         <View style={styles.globalHeaderIconPlaceholder}>
@@ -46,7 +48,7 @@ const GlobalHeader = ({ notificationCount }: GlobalHeaderProps) => {
   );
 };
 
-// Estilos continuam os mesmos
+// Seus estilos permanecem exatamente os mesmos
 const styles = StyleSheet.create({
   globalHeaderContainer: {
     flexDirection: 'row',
